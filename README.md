@@ -18,15 +18,15 @@ Print all scheduled upcoming events in order
 
 Print matchups from next MAIN card
 
-> `create_matchups(gather_event_info(future_event=0)[0])`
+> `create_fight_matchups(gather_event_info(future_event=0)[0])`
 
 Print matchups from next PRELIM card
 
-> `create_matchups(gather_event_info(future_event=0)[1])`
+> `create_fight_matchups(gather_event_info(future_event=0)[1])`
 
 Print ALL matchups from next event
 
-> `create_matchups(list(itertools.chain.from_iterable(gather_event_info(future_event=0))))`
+> `create_fight_matchups(list(itertools.chain.from_iterable(gather_event_info(future_event=0))))`
 
 Print odds for next MAIN card
 
@@ -39,3 +39,11 @@ Print odds for next MAIN card and include favorite
 Print all odds for next card in ordered and unlabelled list
 
 > `gather_odds_matchups()`
+
+Print all weightclasses
+
+> `build_rankings()[0]`
+
+Print rankings in a dictionary where the key is weight class and value is fighters in order. Keys are in same order as `build_rankings()[0]` output
+
+> `build_rankings()[1]`
