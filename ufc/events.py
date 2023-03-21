@@ -16,7 +16,7 @@ def build_next_card_url(event):
     next_card = gather_all_upcoming_cards()[event]
     return requests.get(base_url + next_card, headers = HEADERS)
 
-def gather_all_upcoming_cards():
+def gather_all_upcoming_cards(schedule=False):
     """Return a list of all upcoming cards"""
     upcoming_cards = []
     soup = BeautifulSoup(build_events_url().content, features="html.parser")
@@ -24,10 +24,17 @@ def gather_all_upcoming_cards():
         for href in link.find_all('a', href=True):
             if href.has_attr('href') and href['href'].startswith('/event/') and "#" not in href['href']:
                 upcoming_cards.append(href['href'])
+    if schedule:
+        upcoming_cards = [str(i)
+                          .replace( '/event/', '')
+                          .replace( '-', ' ')
+                          .title()
+                          .replace( 'Ufc', 'UFC') for i in upcoming_cards]
+        # upcoming_cards = [str(i).replace( '-', ' ').title() for i in upcoming_cards]
     return list(dict.fromkeys(upcoming_cards))
 
 def gather_event_info(future_event=0):
-    """Gather info about a requested upcoming event
+    """ Gather info about a requested upcoming event
     
     :param int future_event: X events in future to look up, default 0. Max range varies
     """
@@ -48,7 +55,7 @@ def gather_event_info(future_event=0):
     return list(dict.fromkeys(main_fighter_list)), list(dict.fromkeys(prelim_fighter_list))
 
 def create_fight_matchups(card):
-    """Match the fighters with respective opponent (since scraper gets the fighter names and not matchups)    
+    """ Match the fighters with respective opponent (since scraper gets the fighter names and not matchups)    
     
     :param str card: 
     """
@@ -60,3 +67,24 @@ def create_fight_matchups(card):
         matchups.append(f"{card[i]} vs {card[i+1]}")
         i = i + 2
     return matchups
+
+def get_event(card='main', format='matchups', next_event=0):
+    """ User friendly method of gathering info. If I wanted fast I wouldn't use Python
+
+    :param str card:        main or prelim
+    :param str format:      fighters or matchups
+    :param int next_event:  0 for soonest event. Further out events won't have cards scheduled yet
+    """
+    which_card = ['main', 'prelim']
+    which_format = ['matchups', 'fighters']
+    
+    if card not in which_card or format not in which_format:
+        return "Invalid argument. card='main' or 'prelim'. format='matchups' or 'fighters'"
+    
+    get_card = [which_card.index(i) for i in which_card if card in i][0]
+    get_format = [which_format.index(i) for i in which_format if format in i][0]
+
+    if get_format == 0:
+        return create_fight_matchups(gather_event_info(future_event=next_event)[get_card])
+    elif get_format == 1:
+        return gather_event_info(future_event=next_event)[get_card]

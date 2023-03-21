@@ -70,6 +70,10 @@ def build_rankings(mark_champion=False, numerate_fighters=False):
     return weightclass, rankings_dict, fighter_rank
 
 def weightclass_rankings(weightclass='pfp', mark_champion=False, numerate_fighters=False):
+    if weightclass == 'ranklist':
+        return build_rankings()[0]
+    if weightclass == 'all':
+        return build_rankings(mark_champion=mark_champion, numerate_fighters=numerate_fighters)[1]
     for key, value in WEIGHTCLASS_ALIAS.items():
         if weightclass.lower() in value:
             return build_rankings(mark_champion=mark_champion, numerate_fighters=numerate_fighters)[1][key]

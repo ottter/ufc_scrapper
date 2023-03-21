@@ -7,5 +7,3 @@ from ufc.fighters import *
 mw = weightclass_rankings(weightclass='mw', mark_champion=True, numerate_fighters=True)
 for x in mw:
     print(x)
-
-print(build_rankings()[2])
