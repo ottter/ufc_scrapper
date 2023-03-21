@@ -33,16 +33,16 @@ def gather_all_upcoming_cards(schedule=False):
         # upcoming_cards = [str(i).replace( '-', ' ').title() for i in upcoming_cards]
     return list(dict.fromkeys(upcoming_cards))
 
-def gather_event_info(future_event=0):
+def gather_event_info(next_event=0):
     """ Gather info about a requested upcoming event
     
     :param int future_event: X events in future to look up, default 0. Max range varies
     """
     main_fighter_list = []
     prelim_fighter_list = []
-    if future_event not in range(len(gather_all_upcoming_cards())):
+    if next_event not in range(len(gather_all_upcoming_cards())):
         return "Requested event is not in range of scheduled events"
-    soup = BeautifulSoup(build_next_card_url(future_event).content, features="html.parser")
+    soup = BeautifulSoup(build_next_card_url(next_event).content, features="html.parser")
     for x in [[main_fighter_list, 'main-card'], [prelim_fighter_list, 'prelims-card']]:
         # NOTE: Works only for soonest upcoming event. Future events use different format: div class="l-main"
         for matchup in soup.find_all('div', {'id': x[1]}):
@@ -85,6 +85,6 @@ def get_event(card='main', format='matchups', next_event=0):
     get_format = [which_format.index(i) for i in which_format if format in i][0]
 
     if get_format == 0:
-        return create_fight_matchups(gather_event_info(future_event=next_event)[get_card])
+        return create_fight_matchups(gather_event_info(next_event=next_event)[get_card])
     elif get_format == 1:
-        return gather_event_info(future_event=next_event)[get_card]
+        return gather_event_info(next_event=next_event)[get_card]
